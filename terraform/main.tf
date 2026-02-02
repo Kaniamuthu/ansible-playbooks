@@ -1,5 +1,5 @@
 resource "aws_instance" "apache" {
-  ami           = "ami-005ffcc4bd3136964"
+  ami           = "ami-019715e0d74f695be"
   instance_type = "t2.micro"
   key_name      = "webserver-key"
 
@@ -9,7 +9,7 @@ resource "aws_instance" "apache" {
 }
 
 resource "aws_instance" "nginx" {
-  ami           = "ami-005ffcc4bd3136964"
+  ami           = "ami-019715e0d74f695be"
   instance_type = "t2.micro"
   key_name      = "webserver-key"
 
