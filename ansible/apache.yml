@@ -1,22 +1,11 @@
 ---
-- name: Configure Apache Server
-  hosts: apache_servers
+- hosts: apache_servers
   become: yes
-
   tasks:
-    - name: Install Apache
-      apt:
-        name: apache2
-        state: present
-        update_cache: yes
-
-    - name: Copy Apache HTML
+    - name: Copy Apache HTML page
       copy:
-        src: "{{ playbook_dir }}/../html-content/files/apache.html"
+        src: ../html/apache.html
         dest: /var/www/html/index.html
-
-    - name: Start Apache
-      service:
-        name: apache2
-        state: started
-        enabled: yes
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
