@@ -1,0 +1,22 @@
+---
+- name: Configure Apache Server
+  hosts: apache_servers
+  become: yes
+
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Copy Apache HTML
+      copy:
+        src: "{{ playbook_dir }}/../html-content/files/apache.html"
+        dest: /var/www/html/index.html
+
+    - name: Start Apache
+      service:
+        name: apache2
+        state: started
+        enabled: yes
