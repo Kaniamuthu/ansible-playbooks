@@ -1,0 +1,32 @@
+---
+# group_vars/webservers.yml
+# Variables that apply to all webservers
+
+# Web server configuration
+web_root: /var/www/html
+nginx_user: www-data
+nginx_group: www-data
+
+# File permissions
+web_file_mode: '0644'
+web_dir_mode: '0755'
+
+# Deployment settings
+deployment_cleanup: true
+deployment_backup: false
+
+# Application settings
+app_name: devops-webapp
+app_environment: production
+
+# Monitoring
+enable_health_check: true
+health_check_timeout: 30
+
+# SSH settings
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+```
+
+### **File 6: roles/.gitkeep**
+```
+(Leave this file empty - it's just to create the directory)
