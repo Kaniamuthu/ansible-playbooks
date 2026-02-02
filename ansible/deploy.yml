@@ -1,0 +1,111 @@
+---
+#############################
+# APACHE DEPLOYMENT
+#############################
+- name: Deploy to Apache Servers
+  hosts: apache_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    webapp_source_dir: "{{ lookup('env', 'WORKSPACE') }}/webapp"
+
+  tasks:
+    - name: Update package cache (Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_facts.pkg_mgr == "apt"
+
+    - name: Update package cache (Amazon Linux)
+      yum:
+        update_cache: yes
+      when: ansible_facts.pkg_mgr in ["yum", "dnf"]
+
+    - name: Install Apache (Ubuntu)
+      apt:
+        name: apache2
+        state: present
+      when: ansible_facts.pkg_mgr == "apt"
+
+    - name: Install Apache (Amazon Linux)
+      yum:
+        name: httpd
+        state: present
+      when: ansible_facts.pkg_mgr in ["yum", "dnf"]
+
+    - name: Start Apache (Ubuntu)
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+      when: ansible_facts.pkg_mgr == "apt"
+
+    - name: Start Apache (Amazon Linux)
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_facts.pkg_mgr in ["yum", "dnf"]
+
+    - name: Copy web files
+      copy:
+        src: "{{ webapp_source_dir }}/"
+        dest: /var/www/html/
+        mode: '0644'
+
+    - name: Restart Apache (Ubuntu)
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_facts.pkg_mgr == "apt"
+
+    - name: Restart Apache (Amazon Linux)
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_facts.pkg_mgr in ["yum", "dnf"]
+
+
+#############################
+# NGINX DEPLOYMENT
+#############################
+- name: Deploy to Nginx Servers
+  hosts: nginx_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    webapp_source_dir: "{{ lookup('env', 'WORKSPACE') }}/webapp"
+
+  tasks:
+    - name: Update package cache (Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_facts.pkg_mgr == "apt"
+
+    - name: Update package cache (Amazon Linux)
+      yum:
+        update_cache: yes
+      when: ansible_facts.pkg_mgr in ["yum", "dnf"]
+
+    - name: Install Nginx
+      package:
+        name: nginx
+        state: present
+
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Copy web files
+      copy:
+        src: "{{ webapp_source_dir }}/"
+        dest: /usr/share/nginx/html/
+        mode: '0644'
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
