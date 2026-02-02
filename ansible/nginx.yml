@@ -1,22 +1,11 @@
 ---
-- name: Configure Nginx Server
-  hosts: nginx_servers
+- hosts: nginx_servers
   become: yes
-
   tasks:
-    - name: Install Nginx
-      apt:
-        name: nginx
-        state: present
-        update_cache: yes
-
-    - name: Copy Nginx HTML
+    - name: Copy Nginx HTML page
       copy:
-        src: "{{ playbook_dir }}/../html-content/files/nginx.html"
+        src: ../html/nginx.html
         dest: /var/www/html/index.html
-
-    - name: Start Nginx
-      service:
-        name: nginx
-        state: started
-        enabled: yes
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
