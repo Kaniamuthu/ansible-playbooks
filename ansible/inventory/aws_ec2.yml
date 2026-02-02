@@ -1,0 +1,41 @@
+# inventory/aws_ec2.yml
+# Dynamic inventory for AWS EC2 instances
+
+plugin: aws_ec2
+
+# AWS regions to search
+regions:
+  - ap-south-1
+
+# Filter instances
+filters:
+  tag:Role: webserver
+  instance-state-name: running
+
+# Group instances by ServerType tag
+keyed_groups:
+  # Create groups: apache_servers and nginx_servers
+  - key: tags.ServerType
+    prefix: ''
+    suffix: '_servers'
+  # Create group based on Environment tag
+  - key: tags.Environment
+    prefix: env
+
+# Use public IP as hostname
+hostnames:
+  - ip-address
+
+# Set connection variables
+compose:
+  ansible_user: "'ubuntu'"
+  ansible_ssh_private_key_file: "'/var/lib/jenkins/.ssh/webserver-key'"
+  ansible_python_interpreter: "'/usr/bin/python3'"
+  web_server_type: tags.ServerType
+  service_name: "(tags.ServerType == 'apache') | ternary('apache2', 'nginx')"
+
+# Cache settings
+cache: yes
+cache_plugin: jsonfile
+cache_timeout: 300
+cache_connection: /tmp/aws_inventory_cache
